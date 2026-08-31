@@ -13,18 +13,20 @@ pipeline {
     }
 
     stage('Terraform Fmt') {
-      steps {
-        sh "if command -v docker >/dev/null 2>&1; then
-    docker run --rm \
-      -v ${WORKSPACE}/TF-Files:/workspace \
-      -w /workspace \
-      hashicorp/terraform:1.5.7 \
-      fmt -check -diff
-else
-    terraform -chdir=${WORKSPACE}/TF-Files fmt -check -diff
-fi"
-      }
+    steps {
+        sh '''
+            if command -v docker >/dev/null 2>&1; then
+                docker run --rm \
+                    -v "${WORKSPACE}/TF-Files:/workspace" \
+                    -w /workspace \
+                    hashicorp/terraform:1.5.7 \
+                    fmt -check -diff
+            else
+                terraform -chdir="${WORKSPACE}/TF-Files" fmt -check -diff
+            fi
+        '''
     }
+}
 
     stage('Terraform Init') {
       steps {
