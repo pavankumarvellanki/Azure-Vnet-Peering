@@ -11,7 +11,7 @@ pipeline {
         checkout scm
       }
     }
-  }
+  
     stage('Terraform Fmt') {
     steps {
         sh '''
@@ -115,7 +115,7 @@ pipeline {
       }
     }
   
-
+  }
   post {
     always {
         archiveArtifacts artifacts: 'TF-Files/tfplan', allowEmptyArchive: true
