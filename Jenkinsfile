@@ -114,7 +114,7 @@ pipeline {
         sh "if command -v docker >/dev/null 2>&1; then docker run --rm -v ${WORKSPACE}/TF-Files:/workspace -w /workspace hashicorp/terraform:1.5.7 terraform output; else terraform -chdir=${WORKSPACE}/TF-Files output; fi"
       }
     }
-  }
+  
 
   post {
     always {
@@ -131,5 +131,6 @@ pipeline {
                 terraform -chdir="${WORKSPACE}/TF-Files" show -no-color tfplan || true
             fi
         '''
+      }
     }
 }
