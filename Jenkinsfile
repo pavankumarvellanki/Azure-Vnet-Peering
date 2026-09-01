@@ -118,8 +118,18 @@ pipeline {
 
   post {
     always {
-      archiveArtifacts artifacts: 'TF-Files/tfplan', allowEmptyArchive: true
-      sh "if command -v docker >/dev/null 2>&1; then docker run --rm -v ${WORKSPACE}/TF-Files:/workspace -w /workspace hashicorp/terraform:1.5.7 sh -c 'terraform show -no-color tfplan || true'; else terraform -chdir=${WORKSPACE}/TF-Files show -no-color tfplan || true; fi"
+        archiveArtifacts artifacts: 'TF-Files/tfplan', allowEmptyArchive: true
+
+        sh '''
+            if command -v docker >/dev/null 2>&1; then
+                docker run --rm \
+                    -v "${WORKSPACE}/TF-Files:/workspace" \
+                    -w /workspace \
+                    hashicorp/terraform:1.5.7 \
+                    show -no-color tfplan || true
+            else
+                terraform -chdir="${WORKSPACE}/TF-Files" show -no-color tfplan || true
+            fi
+        '''
     }
-  }
 }
