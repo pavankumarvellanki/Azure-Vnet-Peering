@@ -36,7 +36,7 @@ pipeline {
           string(credentialsId: 'azure-tenant-id', variable: 'ARM_TENANT_ID'),
           string(credentialsId: 'azure-subscription-id', variable: 'ARM_SUBSCRIPTION_ID')
         ]) {
-          sh "if command -v docker >/dev/null 2>&1; then
+          sh '''if command -v docker >/dev/null 2>&1; then
         docker run --rm \
           -v "${WORKSPACE}/TF-Files:/workspace" \
           -w /workspace \
@@ -48,7 +48,7 @@ pipeline {
           init -input=false
     else
         terraform -chdir="${WORKSPACE}/TF-Files" init -input=false
-    fi"
+    fi'''
         }
       }
     }
