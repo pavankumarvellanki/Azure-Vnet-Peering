@@ -11,7 +11,7 @@ pipeline {
         checkout scm
       }
     }
-
+  }
     stage('Terraform Fmt') {
     steps {
         sh '''
@@ -25,9 +25,8 @@ pipeline {
                 terraform -chdir="${WORKSPACE}/TF-Files" fmt -check -diff
             fi
         '''
+      }
     }
-}
-}
 
     stage('Terraform Init') {
       steps {
@@ -78,8 +77,8 @@ pipeline {
                 fi
             '''
         }
+      }
     }
-}
 
     stage('Terraform Plan') {
       steps {
