@@ -88,7 +88,25 @@ pipeline {
           string(credentialsId: 'azure-tenant-id', variable: 'ARM_TENANT_ID'),
           string(credentialsId: 'azure-subscription-id', variable: 'ARM_SUBSCRIPTION_ID')
         ]) {
-          sh "if command -v docker >/dev/null 2>&1; then docker run --rm -v ${WORKSPACE}/TF-Files:/workspace -w /workspace -e ARM_CLIENT_ID=${ARM_CLIENT_ID} -e ARM_CLIENT_SECRET=${ARM_CLIENT_SECRET} -e ARM_TENANT_ID=${ARM_TENANT_ID} -e ARM_SUBSCRIPTION_ID=${ARM_SUBSCRIPTION_ID} hashicorp/terraform:1.5.7 terraform plan -out=tfplan -input=false; else ARM_CLIENT_ID='${ARM_CLIENT_ID}' ARM_CLIENT_SECRET='${ARM_CLIENT_SECRET}' ARM_TENANT_ID='${ARM_TENANT_ID}' ARM_SUBSCRIPTION_ID='${ARM_SUBSCRIPTION_ID}' terraform -chdir=${WORKSPACE}/TF-Files plan -out=tfplan -input=false; fi"
+            sh '''
+                if command -v docker >/dev/null 2>&1; then
+                  docker run --rm \
+                      -v "${WORKSPACE}/TF-Files:/workspace" \
+                      -w /workspace \
+                      -e ARM_CLIENT_ID \
+                      -e ARM_CLIENT_SECRET \
+                      -e ARM_TENANT_ID \
+                      -e ARM_SUBSCRIPTION_ID \
+                      hashicorp/terraform:1.5.7 \
+                      plan -out=tfplan -input=false
+                else
+                  ARM_CLIENT_ID="$ARM_CLIENT_ID" \
+                  ARM_CLIENT_SECRET="$ARM_CLIENT_SECRET" \
+                  ARM_TENANT_ID="$ARM_TENANT_ID" \
+                  ARM_SUBSCRIPTION_ID="$ARM_SUBSCRIPTION_ID" \
+                  terraform -chdir="${WORKSPACE}/TF-Files" plan -out=tfplan -input=false
+                fi
+                '''
         }
       }
     }
